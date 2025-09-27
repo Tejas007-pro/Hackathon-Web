@@ -1,66 +1,39 @@
 const User = require("../models/User");
-const jwt = require("jsonwebtoken");
+const generateToken = require("../utils/tokenUtils");
 
-// 🔑 Generate JWT token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-};
-
-// 📌 Register User
 exports.registerUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
 
-    // Validate fields
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (await User.findOne({ email })) {
+      return res.status(400).json({ msg: "User already exists" });
     }
 
-    // Check if email already exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: "Email already registered" });
-    }
-
-    // Create new user
-    const user = await User.create({ username, email, password });
+    const user = await User.create({ name, email, password });
 
     res.status(201).json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      token: generateToken(user._id),
+      msg: "User registered successfully",
+      token: generateToken(user._id, user.role),
     });
   } catch (error) {
-    console.error("❌ Register Error:", error.message);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ msg: error.message });
   }
 };
 
-// 📌 Login User
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate
-    if (!email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
     const user = await User.findOne({ email });
-
     if (user && (await user.matchPassword(password))) {
-      res.status(200).json({
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        token: generateToken(user._id),
+      res.json({
+        msg: "Login successful",
+        token: generateToken(user._id, user.role),
       });
     } else {
-      res.status(401).json({ message: "Invalid credentials" });
+      res.status(400).json({ msg: "Invalid credentials" });
     }
   } catch (error) {
-    console.error("❌ Login Error:", error.message);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ msg: error.message });
   }
 };
