@@ -1,38 +1,53 @@
 const User = require("../models/User");
-const generateToken = require("../utils/tokenUtils");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-exports.registerUser = async (req, res) => {
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+};
+
+// Register
+exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
-    if (await User.findOne({ email })) {
-      return res.status(400).json({ msg: "User already exists" });
+    if (!name || !email || !password) {
+      return res.status(400).json({ msg: "All fields are required" });
     }
 
-    const user = await User.create({ name, email, password });
+    const userExists = await User.findOne({ email });
+    if (userExists) return res.status(400).json({ msg: "User already exists" });
 
-    res.status(201).json({
-      msg: "User registered successfully",
-      token: generateToken(user._id, user.role),
-    });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.create({ name, email, password: hashedPassword });
+    res.status(201).json({ msg: "User registered successfully", token: generateToken(user._id) });
   } catch (error) {
     res.status(500).json({ msg: error.message });
   }
 };
 
-exports.loginUser = async (req, res) => {
+// Login
+exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ email });
-    if (user && (await user.matchPassword(password))) {
-      res.json({
-        msg: "Login successful",
-        token: generateToken(user._id, user.role),
-      });
-    } else {
-      res.status(400).json({ msg: "Invalid credentials" });
-    }
+    if (!user) return res.status(400).json({ msg: "Invalid credentials" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+
+    res.json({ msg: "Login successful", token: generateToken(user._id) });
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+};
+
+// Profile
+exports.profile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user).select("-password");
+    res.json(user);
   } catch (error) {
     res.status(500).json({ msg: error.message });
   }
