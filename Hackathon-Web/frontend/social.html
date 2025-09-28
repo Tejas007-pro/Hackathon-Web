@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Social Feed — Civic Social</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">Civic Social</div>
+      <nav class="nav">
+        <a href="index.html">🏠 Home</a>
+        <a href="social.html">🗣 Social Feed</a>
+        <a href="complaints.html">⚠️ Complaints</a>
+      </nav>
+    </aside>
+
+    <main class="mainArea">
+      <header class="header">
+        <div>Social Feed</div>
+        <div><button class="btn" onclick="location.href='login.html'">Sign in to post</button></div>
+      </header>
+
+      <section>
+        <form id="postForm" class="form" onsubmit="createPost(event)">
+          <textarea id="postContent" class="input" rows="3" placeholder="Share an update or report..."></textarea>
+          <input id="postMedia" class="input" placeholder="Media URL (optional)">
+          <div style="display:flex;gap:.5rem">
+            <button class="btn" type="submit">Post</button>
+            <button type="button" class="btn" onclick="window.csFetchPosts()">Refresh</button>
+          </div>
+        </form>
+      </section>
+
+      <section style="margin-top:1rem">
+        <div id="feedList"></div>
+      </section>
+
+      <div class="footer">Community feed — stay civil, stay safe.</div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.csFetchPosts();
+      document.getElementById('postForm').addEventListener('submit', createPost);
+    });
+  </script>
+</body>
+</html>

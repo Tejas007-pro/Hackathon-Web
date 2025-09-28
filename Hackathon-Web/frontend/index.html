@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Civic Social — Home</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">Civic Social</div>
+      <nav class="nav">
+        <a href="index.html">🏠 Home</a>
+        <a href="social.html">🗣 Social Feed</a>
+        <a href="complaints.html">⚠️ Complaints</a>
+        <a href="awareness.html">📚 Awareness</a>
+        <a href="about.html">ℹ️ About</a>
+        <a href="register.html">✍️ Register</a>
+        <a href="login.html">🔐 Login</a>
+      </nav>
+    </aside>
+
+    <main class="mainArea">
+      <header class="header">
+        <div>Welcome to Civic Social — Live life in a better way</div>
+        <div class="small">Build civic trust · Report · Discuss · Resolve</div>
+      </header>
+
+      <section class="hero">
+        <div class="left">
+          <h1>Make your city better — report, share, and mobilize.</h1>
+          <p>Fast reports, public tracking, community-backed resolutions. Join fellow citizens and municipal teams.</p>
+        </div>
+        <img src="homeImg.avif" alt="community" style="width:240px;border-radius:10px">
+      </section>
+
+      <section>
+        <h2 style="margin:0 0 .5rem 0">Featured</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Civic Awareness</h3>
+            <p class="small">Interactive tips, resources and weekly civic campaigns.</p>
+          </div>
+          <div class="card">
+            <h3>Social Initiatives</h3>
+            <p class="small">Community driven projects and events.</p>
+          </div>
+          <div class="card">
+            <h3>Top Complaints</h3>
+            <p class="small">Priority issues in your area (data-driven).</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 style="margin:0 0 .5rem 0">Latest Posts</h2>
+        <div id="postsArea"></div>
+      </section>
+
+      <div class="footer">© Civic Social — built for Smart India Hackathon 2025</div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    // initialize home page content
+    window.addEventListener('DOMContentLoaded', async () => {
+      if (document.getElementById('postsArea')) {
+        await window.csFetchPosts(); // from main.js
+      }
+    });
+  </script>
+</body>
+</html>

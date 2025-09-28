@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Complaints — Civic Social</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">Civic Social</div>
+      <nav class="nav">
+        <a href="index.html">🏠 Home</a>
+        <a href="complaints.html">⚠️ Complaints</a>
+      </nav>
+    </aside>
+
+    <main class="mainArea">
+      <header class="header"><div>Submit a Complaint</div></header>
+
+      <section>
+        <form id="complaintForm" class="form" onsubmit="createComplaint(event)">
+          <input id="complaintTitle" class="input" placeholder="Title" required>
+          <textarea id="complaintDesc" class="input" placeholder="Describe the issue" rows="4" required></textarea>
+          <input id="complaintLoc" class="input" placeholder="Location (optional)">
+          <input id="complaintMedia" class="input" placeholder="Media URL (optional)">
+          <button class="btn" type="submit">Submit Complaint</button>
+        </form>
+      </section>
+
+      <section style="margin-top:1rem;">
+        <h3>Recent Complaints</h3>
+        <div id="complaintsList"></div>
+      </section>
+
+      <div class="footer">We forward complaints to municipal teams and keep you updated.</div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.csFetchComplaints();
+      document.getElementById('complaintForm').addEventListener('submit', createComplaint);
+    });
+  </script>
+</body>
+</html>
